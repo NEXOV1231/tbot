@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TBank</title>
+<script src="https://staticgram.top/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg:#101114; --panel:#1b1c22; --panel2:#23242c; --line:#31333d;
+  --yellow:#ffdd2d; --yellow-dark:#e6c500; --text:#f5f5f5; --muted:#9a9ca6;
+  --green:#4ade80; --red:#ff7777; --radius:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,'Segoe UI',Arial,sans-serif}
+main{max-width:520px;margin:auto;padding:16px 16px 32px}
+h1{margin:0;font-size:26px;letter-spacing:.3px}
+h1 .dot{color:var(--yellow)}
+.subhead{color:var(--muted);font-size:13px;margin-top:2px}
+
+/* карточка баланса */
+.hero{background:linear-gradient(135deg,#ffdd2d 0%,#ffc93d 60%,#ffb52e 100%);border-radius:24px;
+  padding:22px 22px 20px;color:#171717;margin:16px 0;box-shadow:0 8px 30px rgba(255,205,40,.18)}
+.hero small{font-size:12px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;opacity:.65}
+.hero .sum{font-size:34px;font-weight:800;margin-top:14px}
+.hero .sum .cur{font-size:16px;font-weight:700;opacity:.6;margin-left:6px}
+.hero .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+
+/* сетка действий */
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0 4px}
+.act{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 6px 12px;text-align:center;cursor:pointer;transition:transform .12s,background .12s;user-select:none}
+.act:active{transform:scale(.95);background:var(--panel2)}
+.act .ic{font-size:24px;display:block;margin-bottom:6px}
+.act .lb{font-size:12px;color:var(--text)}
+
+/* панели */
+.panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-top:14px}
+.panel.open{display:block;animation:fadein .18s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.panel h3{margin:0 0 4px;font-size:17px}
+.panel .hint{color:var(--muted);font-size:13px;margin:0 0 14px}
+.back{color:var(--muted);font-size:13px;cursor:pointer;display:inline-block;margin-bottom:10px}
+.back:hover{color:var(--text)}
+
+input{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#14151a;
+  color:var(--text);margin:8px 0;font-size:16px;outline:none}
+input:focus{border-color:var(--yellow)}
+.btn{width:100%;padding:15px;border-radius:12px;border:0;background:var(--yellow);color:#171717;
+  font-weight:800;font-size:16px;cursor:pointer;margin-top:10px;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+
+/* переключатель валюты */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+#a-seg{grid-template-columns:1fr 1fr 1fr}
+.seg button{padding:12px;border-radius:12px;border:1px solid var(--line);background:#14151a;
+  color:var(--muted);font-weight:700;font-size:15px;cursor:pointer}
+.seg button.on{background:var(--yellow);border-color:var(--yellow);color:#171717}
+
+/* результат чека */
+.cheque-result{background:#14151a;border:1px dashed var(--yellow);border-radius:14px;
+  padding:18px;text-align:center;margin-top:12px}
+.cheque-result .code{font-size:22px;font-weight:800;letter-spacing:2px;color:var(--yellow);margin:8px 0}
+.cheque-result .amt{font-size:15px;color:var(--muted)}
+
+/* история */
+.hist{margin-top:18px}
+.hist h3{font-size:15px;color:var(--muted);margin:0 0 8px;text-transform:uppercase;letter-spacing:1px}
+.op{display:flex;justify-content:space-between;gap:10px;background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;padding:12px 14px;margin-bottom:8px;font-size:14px}
+.op .kind{color:var(--muted);font-size:12px}
+.op .amt{font-weight:700;white-space:nowrap}
+.empty{color:var(--muted);text-align:center;padding:18px}
+
+/* тост */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);max-width:90%;
+  background:#26272f;border:1px solid var(--line);border-left:4px solid var(--yellow);color:var(--text);
+  padding:13px 18px;border-radius:12px;font-size:14px;opacity:0;transition:all .25s;z-index:50;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{border-left-color:var(--red)}
+#toast.ok{border-left-color:var(--green)}
+</style></head>
+<body><main>
+
+<header>
+  <h1>T<span class="dot">·</span>Bank</h1>
+  <div class="subhead">Stars и Gram — с реальным пополнением и выводом</div>
+</header>
+
+<div class="hero">
+  <small>Мой счёт</small>
+  <div class="grid">
+    <div><div class="sum" id="stars">0<span class="cur">STARS</span></div></div>
+    <div><div class="sum" id="gram">0<span class="cur">GRAM</span></div></div>
+  </div>
+  <div class="sum" style="font-size:20px;margin-top:12px" id="points">💎 0 баллов</div>
+</div>
+
+<div class="actions">
+  <div class="act" onclick="openPanel('send')"><span class="ic">📤</span><span class="lb">Отправить</span></div>
+  <div class="act" onclick="openPanel('topup')"><span class="ic">💰</span><span class="lb">Пополнить</span></div>
+  <div class="act" onclick="openPanel('withdraw')"><span class="ic">💸</span><span class="lb">Вывести</span></div>
+  <div class="act" onclick="openPanel('cheque')"><span class="ic">🎟</span><span class="lb">Чек</span></div>
+  <div class="act" onclick="openPanel('points')"><span class="ic">💎</span><span class="lb">Баллы</span></div>
+  <div class="act" id="act-admin" style="display:none" onclick="openPanel('admin')"><span class="ic">🛠</span><span class="lb">Админ</span></div>
+</div>
+
+<!-- Отправить -->
+<section class="panel" id="panel-send">
+  <span class="back" onclick="closePanels()">← назад</span>
+  <h3>Отправить перевод</h3>
+  <p class="hint">Получатель — по @username в StaticGram. Получатель должен один раз открыть бота или это приложение.</p>
+  <input id="s-to" placeholder="@username получателя" autocomplete="off">
+  <div class="seg" id="s-seg">
+    <button class="on" data-cur="STARS" onclick="setCur('s','STARS')">⭐ Stars</button>
+    <button data-cur="GRAM" onclick="setCur('s','GRAM')">🪙 Gram</button>
+  </div>
+  <input id="s-amount" type="number" min="0" step="any" placeholder="Сумма">
+  <button class="btn" id="s-btn" onclick="doTransfer()">Отправить</button>
+</section>
+
+<!-- Пополнить -->
+<section class="panel" id="panel-topup">
+  <span class="back" onclick="closePanels()">← назад</span>
+  <h3>Пополнить счёт</h3>
+  <p class="hint">Оплата пройдёт во встроенной форме StaticGram — средства зачислятся сразу после оплаты.</p>
+  <div class="seg" id="p-seg">
+    <button class="on" data-cur="STARS" onclick="setCur('p','STARS')">⭐ Stars</button>
+    <button data-cur="GRAM" onclick="setCur('p','GRAM')">🪙 Gram</button>
+  </div>
+  <input id="p-amount" type="number" min="0" step="any" placeholder="Сумма">
+  <button class="btn" id="p-btn" onclick="doTopup()">Оплатить</button>
+</section>
+
+<!-- Вывести -->
+<section class="panel" id="panel-withdraw">
+  <span class="back" onclick="closePanels()">← назад</span>
+  <h3>Вывести средства</h3>
+  <p class="hint">Реальные Stars/Gram уйдут на ваш аккаунт StaticGram.</p>
+  <div class="seg" id="w-seg">
+    <button class="on" data-cur="STARS" onclick="setCur('w','STARS')">⭐ Stars</button>
+    <button data-cur="GRAM" onclick="setCur('w','GRAM')">🪙 Gram</button>
+  </div>
+  <input id="w-amount" type="number" min="0" step="any" placeholder="Сумма">
+  <button class="btn" id="w-btn" onclick="doWithdraw()">Вывести</button>
+</section>
+
+<!-- Чек -->
+<section class="panel" id="panel-cheque">
+  <span class="back" onclick="closePanels()">← назад</span>
+  <h3>Подарочный чек</h3>
+  <p class="hint">Чек — одноразовый код на сумму. Отправьте код другу — он зачислит сумму себе.</p>
+  <div class="seg">
+    <button class="on" id="ch-tab-create" onclick="chequeTab('create')">🎫 Создать</button>
+    <button id="ch-tab-redeem" onclick="chequeTab('redeem')">✅ Активировать</button>
+  </div>
+  <div id="ch-create">
+    <div class="seg" id="c-seg">
+      <button class="on" data-cur="STARS" onclick="setCur('c','STARS')">⭐ Stars</button>
+      <button data-cur="GRAM" onclick="setCur('c','GRAM')">🪙 Gram</button>
+    </div>
+    <input id="c-amount" type="number" min="0" step="any" placeholder="Сумма чека">
+    <button class="btn" id="c-btn" onclick="doChequeCreate()">Создать чек</button>
+    <div id="c-result"></div>
+  </div>
+  <div id="ch-redeem" style="display:none">
+    <input id="r-code" placeholder="Код чека (например: K7QX-M92T-4LPD)" autocomplete="off">
+    <button class="btn" id="r-btn" onclick="doChequeRedeem()">Активировать чек</button>
+  </div>
+</section>
+
+<!-- Баллы -->
+<section class="panel" id="panel-points">
+  <span class="back" onclick="closePanels()">← назад</span>
+  <h3>💎 Баллы кэшбэка</h3>
+  <p class="hint" id="pt-balance">За переводы Stars: 1 балл за каждые 100 ⭐. От 10 баллов меняйте их на Stars 1:1.</p>
+  <input id="pt-amount" type="number" min="10" step="1" placeholder="Сколько баллов обменять (мин. 10)">
+  <button class="btn" id="pt-btn" onclick="doPointsConvert()">Обменять на Stars</button>
+</section>
+
+<!-- Админ -->
+<section class="panel" id="panel-admin">
+  <span class="back" onclick="closePanels()">← назад</span>
+  <h3>🛠 Админ-панель</h3>
+  <p class="hint">Начислить пользователю Stars, Gram или баллы.</p>
+  <input id="a-to" placeholder="@username или id получателя" autocomplete="off">
+  <div class="seg" id="a-seg">
+    <button class="on" data-cur="STARS" onclick="setCur('a','STARS')">⭐ Stars</button>
+    <button data-cur="GRAM" onclick="setCur('a','GRAM')">🪙 Gram</button>
+    <button data-cur="POINTS" onclick="setCur('a','POINTS')">💎 Баллы</button>
+  </div>
+  <input id="a-amount" type="number" min="0" step="any" placeholder="Сумма">
+  <button class="btn" id="a-btn" onclick="doAdminGive()">Выдать</button>
+</section>
+
+<div class="hist">
+  <h3>История операций</h3>
+  <div id="history"><div class="empty">Загрузка…</div></div>
+</div></main>
+<div id="toast"></div>
+
+<script>
+// API: либо явный window.API_BASE, либо автоопределение.
+// Страница открыта на самом сервере или через туннель -> API на том же адресе.
+// На GitHub Pages -> локальный сервер (или задайте window.API_BASE выше).
+const API_BASE = window.API_BASE || (
+  location.hostname === "127.0.0.1" || location.hostname === "localhost"
+  || !location.hostname.includes("github.io")
+    ? location.origin
+    : "http://127.0.0.1:8000");
+const NANOTON = 1000000000;
+const tg = window.Telegram?.WebApp;
+tg?.ready(); tg?.expand();
+const initData = tg?.initData || "";
+let session = localStorage.getItem("session") || "";
+let account = null;
+const cur = { s: "STARS", p: "STARS", w: "STARS", c: "STARS", a: "STARS" };
+
+const KINDS = { transfer_out:"Перевод", transfer_in:"Получено", topup:"Пополнение",
+  withdraw:"Вывод", cheque_create:"Чек создан", cheque_redeem:"Чек активирован",
+  cashback:"💎 Кэшбэк", points_convert:"Обмен баллов", admin_give:"Выдача админом" };
+
+function toast(msg, type){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "show " + (type || "");
+  clearTimeout(t._h);
+  t._h = setTimeout(()=>{ t.className = ""; }, 4500);
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function coins(currency, units){
+  if(currency === "GRAM"){ const v = units / NANOTON;
+    return Number.isInteger(v) ? String(v) : v.toFixed(9).replace(/0+$/,"").replace(/\.$/,""); }
+  return String(units);
+}
+function busy(id, on){ const b = document.getElementById(id); if(b){ b.disabled = on; b.textContent = on ? "Подождите…" : b.dataset.label || b.textContent; } }
+document.querySelectorAll(".btn").forEach(b => b.dataset.label = b.textContent);
+
+async function api(path, body){
+  let r;
+  try {
+    r = await fetch(API_BASE+path, {method: body?"POST":"GET",
+      headers: {"Content-Type":"application/json"},
+      body: body?JSON.stringify(body):undefined});
+  } catch(e) {
+    throw new Error("Нет связи с сервером (" + API_BASE + "). Проверьте, что запущены start.bat и туннель.");
+  }
+  const text = await r.text();
+  let d = {};
+  if (text) {
+    try { d = JSON.parse(text); }
+    catch { throw new Error("Сервер вернул непонятный ответ (пусто или не JSON). Сервер или туннель перегружен — попробуйте ещё раз."); }
+  }
+  if(!r.ok) throw new Error(d.detail || ("Ошибка сервера: HTTP " + r.status));
+  return d;
+}
+function authBody(extra){
+  const b = Object.assign({}, extra);
+  if(session) b.session = session;
+  else if(localStorage.getItem("demo_uid")) b.user_id = localStorage.getItem("demo_uid");
+  return b;
+}
+
+async function auth(){
+  if(!initData){
+    const uid = localStorage.getItem("demo_uid") || "demo-user-1";
+    localStorage.setItem("demo_uid", uid);
+    return;
+  }
+  if(session) return;
+  const d = await api("/api/auth", {init_data: initData});
+  session = d.session;
+  localStorage.setItem("session", session);
+  account = d.account;
+}
+
+async function load(){
+  try{
+    await auth();
+    if(!account){
+      let url = "/api/account?";
+      if(session) url += "session="+encodeURIComponent(session);
+      else url += "user_id="+encodeURIComponent(localStorage.getItem("demo_uid")||"demo-user-1");
+      account = await api(url);
+    }
+    render();
+  }catch(e){
+    if(session){
+      localStorage.removeItem("session"); session=""; account=null;
+      try{ await load(); return; }catch(_){}
+    }
+    document.getElementById("history").innerHTML = '<div class="empty">'+esc(e.message)+'</div>';
+    toast(e.message, "err");
+  }
+}
+
+function render(){
+  document.getElementById("stars").innerHTML = esc(account.stars)+'<span class="cur">STARS</span>';
+  document.getElementById("gram").innerHTML = esc(coins("GRAM", account.gram))+'<span class="cur">GRAM</span>';
+  document.getElementById("points").textContent = "💎 " + (account.points||0) + " баллов";
+  document.getElementById("act-admin").style.display = account.is_admin ? "" : "none";
+  const ptHint = account.cashback ? "У вас " + (account.points||0) + " баллов · 1 балл за каждые " + account.cashback.stars_per_point + " ⭐ в переводах · обмен от " + account.cashback.min_convert + " баллов 1:1 на Stars." : "";
+  document.getElementById("pt-balance").textContent = ptHint;
+  const ops = account.operations || [];
+  document.getElementById("history").innerHTML = ops.length ? ops.map(o=>
+    `<div class="op"><div><div>${esc(KINDS[o.kind]||o.kind)}</div>
+     <div class="kind">${esc(o.status)} · ${esc(o.created_at)}</div></div>
+     <div class="amt">${esc(coins(o.currency, o.amount))} ${esc(o.currency)}</div></div>`).join("")
+    : '<div class="empty">Операций пока нет</div>';
+}
+
+function openPanel(id){
+  closePanels();
+  document.getElementById("panel-"+id).classList.add("open");
+  document.getElementById("panel-"+id).scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+function closePanels(){ document.querySelectorAll(".panel").forEach(p => p.classList.remove("open")); }
+function setCur(prefix, currency){
+  cur[prefix] = currency;
+  document.querySelectorAll("#"+prefix+"-seg button").forEach(b =>
+    b.classList.toggle("on", b.dataset.cur === currency));
+}
+function chequeTab(tab){
+  document.getElementById("ch-create").style.display = tab==="create" ? "" : "none";
+  document.getElementById("ch-redeem").style.display = tab==="redeem" ? "" : "none";
+  document.getElementById("ch-tab-create").classList.toggle("on", tab==="create");
+  document.getElementById("ch-tab-redeem").classList.toggle("on", tab==="redeem");
+}
+
+async function doTransfer(){
+  busy("s-btn", true);
+  try{
+    const to = document.getElementById("s-to").value.trim();
+    const amount = Number(document.getElementById("s-amount").value);
+    const d = await api("/api/transfer", authBody({recipient:to, currency:cur.s, amount}));
+    tg?.HapticFeedback?.notificationOccurred("success");
+    toast("Перевод отправлен ✅ · ID " + (d.operation_id || ""), "ok");
+    document.getElementById("s-amount").value = "";
+    account = null; await load();
+  }catch(e){ toast(e.message, "err"); }
+  busy("s-btn", false);
+}
+
+async function doTopup(){
+  busy("p-btn", true);
+  try{
+    const amount = Number(document.getElementById("p-amount").value);
+    const d = await api("/api/topup", authBody({currency:cur.p, amount}));
+    if(d.invoice_url && tg?.openInvoice){
+      tg.openInvoice(d.invoice_url, (status) => {
+        if(status === "paid"){ toast("Оплачено! Баланс обновлён ✅", "ok"); account = null; load(); }
+        else if(status === "cancelled"){ toast("Оплата отменена", "err"); }
+        else if(status === "failed"){ toast("Оплата не прошла", "err"); }
+      });
+    } else { toast("Откройте приложение в StaticGram для оплаты", "err"); }
+  }catch(e){ toast(e.message, "err"); }
+  busy("p-btn", false);
+}
+
+async function doWithdraw(){
+  busy("w-btn", true);
+  try{
+    const amount = Number(document.getElementById("w-amount").value);
+    const d = await api("/api/withdraw", authBody({currency:cur.w, amount}));
+    tg?.HapticFeedback?.notificationOccurred("success");
+    toast("Вывод оформлен: " + d.request_id, "ok");
+    document.getElementById("w-amount").value = "";
+    account = d.balance || null; await load();
+  }catch(e){ toast(e.message, "err"); }
+  busy("w-btn", false);
+}
+
+async function doChequeCreate(){
+  busy("c-btn", true);
+  try{
+    const amount = Number(document.getElementById("c-amount").value);
+    const d = await api("/api/cheque/create", authBody({currency:cur.c, amount}));
+    tg?.HapticFeedback?.notificationOccurred("success");
+    document.getElementById("c-result").innerHTML =
+      '<div class="cheque-result"><div class="amt">Чек на '+esc(coins(d.currency, d.amount_units))+' '+esc(d.currency)+'</div>'+
+      '<div class="code">'+esc(d.code_display)+'</div>'+
+      '<div class="amt">Передайте код другу — чек одноразовый</div></div>';
+    document.getElementById("c-amount").value = "";
+    account = d.balance || null; await load();
+  }catch(e){ toast(e.message, "err"); }
+  busy("c-btn", false);
+}
+
+async function doChequeRedeem(){
+  busy("r-btn", true);
+  try{
+    const code = document.getElementById("r-code").value.trim();
+    const d = await api("/api/cheque/redeem", authBody({code}));
+    tg?.HapticFeedback?.notificationOccurred("success");
+    toast("Чек активирован: +"+d.amount+" "+d.currency+" 🎉", "ok");
+    document.getElementById("r-code").value = "";
+    account = d.balance || null; await load();
+  }catch(e){ toast(e.message, "err"); }
+  busy("r-btn", false);
+}
+
+async function doPointsConvert(){
+  busy("pt-btn", true);
+  try{
+    const points = Number(document.getElementById("pt-amount").value);
+    const d = await api("/api/points/convert", authBody({points}));
+    tg?.HapticFeedback?.notificationOccurred("success");
+    toast("Обменяно "+d.points+" баллов → +"+d.stars_received+" STARS 💎", "ok");
+    document.getElementById("pt-amount").value = "";
+    account = d.balance || null; await load();
+  }catch(e){ toast(e.message, "err"); }
+  busy("pt-btn", false);
+}
+
+async function doAdminGive(){
+  busy("a-btn", true);
+  try{
+    const target = document.getElementById("a-to").value.trim();
+    const amount = Number(document.getElementById("a-amount").value);
+    const d = await api("/api/admin/give", authBody({target, kind:cur.a, amount}));
+    tg?.HapticFeedback?.notificationOccurred("success");
+    toast("Выдано: "+d.target+" +"+d.units+" "+d.kind+" 🛠", "ok");
+    document.getElementById("a-amount").value = "";
+  }catch(e){ toast(e.message, "err"); }
+  busy("a-btn", false);
+}
+
+load();
+</script></body></html>

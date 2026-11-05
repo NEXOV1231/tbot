@@ -1,0 +1,1334 @@
+!DOCTYPE html
+html lang=ru
+head
+meta charset=UTF-8
+meta name=viewport content=width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no
+meta name=theme-color content=#101010
+titleТ-Банк — StaticGramtitle
+
+script src=httpstelegram.orgjstelegram-web-app.jsscript
+
+style
+root {
+    --bg #101010;
+    --panel #202020;
+    --panel2 #292929;
+    --yellow #ffdd2d;
+    --white #ffffff;
+    --muted #999999;
+    --blue #51b9ff;
+    --green #5bdf9b;
+    --red #ff7777;
+}
+
+ {
+    box-sizing border-box;
+    -webkit-tap-highlight-color transparent;
+}
+
+body {
+    margin 0;
+    background var(--bg);
+    color var(--white);
+    font-family -apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif;
+    padding-bottom 90px;
+}
+
+button, input, select {
+    font inherit;
+}
+
+button {
+    cursor pointer;
+}
+
+.app {
+    max-width 520px;
+    min-height 100vh;
+    margin auto;
+    padding 18px 16px;
+}
+
+.header {
+    display flex;
+    justify-content space-between;
+    align-items center;
+    margin-bottom 25px;
+}
+
+.brand {
+    display flex;
+    align-items center;
+    gap 11px;
+    font-size 23px;
+    font-weight 850;
+    letter-spacing -.8px;
+}
+
+.logo {
+    display grid;
+    place-items center;
+    width 42px;
+    height 42px;
+    background var(--yellow);
+    color #151515;
+    border-radius 14px;
+    font-weight 950;
+    font-size 26px;
+}
+
+.avatar {
+    width 43px;
+    height 43px;
+    border-radius 50%;
+    display grid;
+    place-items center;
+    background #303030;
+    font-weight 800;
+}
+
+.demo {
+    display inline-block;
+    color var(--yellow);
+    background #332e17;
+    padding 8px 11px;
+    border-radius 9px;
+    font-size 11px;
+    font-weight 800;
+    letter-spacing .4px;
+    margin-bottom 19px;
+}
+
+h1 {
+    font-size 29px;
+    line-height 1.2;
+    letter-spacing -.8px;
+    margin 0 0 8px;
+}
+
+.subtitle {
+    color var(--muted);
+    font-size 14px;
+    line-height 1.5;
+    margin-bottom 23px;
+}
+
+.section-title {
+    font-size 20px;
+    font-weight 800;
+    margin 27px 0 15px;
+    letter-spacing -.4px;
+}
+
+.balance-card {
+    position relative;
+    overflow hidden;
+    padding 23px;
+    border-radius 25px;
+    min-height 205px;
+    background
+        radial-gradient(ellipse at 85% 10%, #77631b 0%, transparent 40%),
+        linear-gradient(135deg, #292929, #171717 75%);
+    border 1px solid #343434;
+    box-shadow 0 12px 30px #0003;
+}
+
+.balance-cardafter {
+    content ;
+    position absolute;
+    width 180px;
+    height 180px;
+    border 30px solid #ffdd2d0a;
+    border-radius 50%;
+    right -65px;
+    bottom -75px;
+    pointer-events none;
+}
+
+.balance-caption {
+    color #b5b5b5;
+    font-size 13px;
+}
+
+.balance-row {
+    display flex;
+    align-items center;
+    gap 12px;
+    margin-top 18px;
+    font-size 28px;
+    font-weight 850;
+    letter-spacing -.8px;
+}
+
+.currency-icon {
+    font-size 28px;
+    width 36px;
+    text-align center;
+}
+
+.stars {
+    color var(--yellow);
+}
+
+.gram {
+    color var(--blue);
+}
+
+.account-bottom {
+    margin-top 22px;
+    font-size 11px;
+    letter-spacing 1.2px;
+    color #888;
+    font-weight 700;
+}
+
+.actions {
+    display grid;
+    grid-template-columns repeat(4, 1fr);
+    gap 9px;
+    margin-top 20px;
+}
+
+.action {
+    min-width 0;
+    padding 14px 3px;
+    border 1px solid #303030;
+    border-radius 19px;
+    background var(--panel);
+    color white;
+}
+
+.action-icon {
+    font-size 27px;
+    color var(--yellow);
+    margin-bottom 10px;
+}
+
+.action-label {
+    font-size 11px;
+    line-height 1.4;
+}
+
+.product {
+    display flex;
+    align-items center;
+    gap 13px;
+    padding 15px;
+    margin-bottom 10px;
+    background var(--panel);
+    border 1px solid #2d2d2d;
+    border-radius 18px;
+}
+
+.product-icon {
+    width 47px;
+    height 47px;
+    border-radius 15px;
+    display grid;
+    place-items center;
+    flex-shrink 0;
+    background #38321b;
+    color var(--yellow);
+    font-size 23px;
+}
+
+.product-info {
+    flex 1;
+    min-width 0;
+}
+
+.product-name {
+    font-size 14px;
+    font-weight 750;
+    margin-bottom 5px;
+}
+
+.product-description {
+    color var(--muted);
+    font-size 12px;
+    line-height 1.4;
+}
+
+.arrow {
+    color #888;
+    font-size 23px;
+}
+
+.transaction {
+    display flex;
+    align-items center;
+    gap 12px;
+    padding 15px 0;
+    border-bottom 1px solid #292929;
+}
+
+.transactionlast-child {
+    border-bottom none;
+}
+
+.transaction-icon {
+    width 43px;
+    height 43px;
+    border-radius 15px;
+    display grid;
+    place-items center;
+    background #2b2b2b;
+    font-size 20px;
+    flex-shrink 0;
+}
+
+.transaction-info {
+    flex 1;
+    min-width 0;
+}
+
+.transaction-name {
+    font-size 13px;
+    font-weight 750;
+}
+
+.transaction-date {
+    color var(--muted);
+    font-size 11px;
+    margin-top 5px;
+}
+
+.transaction-amount {
+    font-size 13px;
+    font-weight 800;
+    white-space nowrap;
+}
+
+.positive {
+    color var(--green);
+}
+
+.negative {
+    color var(--white);
+}
+
+.notice {
+    padding 13px;
+    border-radius 13px;
+    background #202020;
+    color #aaa;
+    font-size 11px;
+    line-height 1.6;
+    margin-top 22px;
+}
+
+.page {
+    display none;
+}
+
+.page.active {
+    display block;
+    animation fade .18s ease;
+}
+
+@keyframes fade {
+    from { opacity 0; transform translateY(5px); }
+    to { opacity 1; transform translateY(0); }
+}
+
+.bottom-nav {
+    position fixed;
+    z-index 10;
+    bottom 0;
+    left 50%;
+    transform translateX(-50%);
+    width 100%;
+    max-width 520px;
+    display grid;
+    grid-template-columns repeat(4, 1fr);
+    padding 11px 5px calc(12px + env(safe-area-inset-bottom));
+    background #191919f5;
+    border-top 1px solid #303030;
+    backdrop-filter blur(18px);
+}
+
+.nav-button {
+    background transparent;
+    color #888;
+    display flex;
+    flex-direction column;
+    align-items center;
+    gap 5px;
+    font-size 10px;
+    border none;
+}
+
+.nav-icon {
+    font-size 22px;
+}
+
+.nav-button.active {
+    color var(--yellow);
+}
+
+.primary {
+    width 100%;
+    padding 16px;
+    border none;
+    border-radius 15px;
+    background var(--yellow);
+    color #161616;
+    font-size 14px;
+    font-weight 850;
+    margin-top 12px;
+}
+
+.secondary {
+    width 100%;
+    padding 15px;
+    border 1px solid #393939;
+    border-radius 15px;
+    background var(--panel2);
+    color white;
+    font-size 14px;
+    font-weight 700;
+    margin-top 10px;
+}
+
+.field-label {
+    display block;
+    font-size 12px;
+    color #b7b7b7;
+    margin 19px 0 8px;
+}
+
+.field {
+    width 100%;
+    padding 16px;
+    color white;
+    background #242424;
+    border 1px solid #383838;
+    border-radius 14px;
+    outline none;
+}
+
+.fieldfocus {
+    border-color var(--yellow);
+}
+
+select.field {
+    appearance auto;
+}
+
+.form-card {
+    background #1c1c1c;
+    border 1px solid #303030;
+    border-radius 21px;
+    padding 19px;
+}
+
+.hint {
+    color #8f8f8f;
+    font-size 11px;
+    line-height 1.6;
+    margin-top 13px;
+}
+
+.profile-card {
+    background var(--panel);
+    border-radius 20px;
+    padding 19px;
+    margin-bottom 13px;
+}
+
+.profile-name {
+    font-size 21px;
+    font-weight 850;
+    margin-bottom 7px;
+}
+
+.toast {
+    position fixed;
+    z-index 30;
+    bottom 98px;
+    left 18px;
+    right 18px;
+    max-width 480px;
+    margin auto;
+    padding 15px;
+    border-radius 14px;
+    background #f5f5f5;
+    color #171717;
+    font-size 13px;
+    font-weight 700;
+    text-align center;
+    display none;
+    box-shadow 0 8px 30px #0006;
+}
+
+.empty {
+    padding 24px 12px;
+    background var(--panel);
+    border-radius 16px;
+    color #999;
+    font-size 13px;
+    text-align center;
+    line-height 1.6;
+}
+
+@media (max-width 360px) {
+    .app { padding 15px 12px; }
+    .balance-row { font-size 24px; }
+    .actions { gap 5px; }
+    .action-label { font-size 10px; }
+}
+style
+head
+
+body
+div class=app
+
+    header class=header
+        div class=brand
+            div class=logoTdiv
+            spanТ-Банкspan
+        div
+        div class=avatar id=avatarUdiv
+    header
+
+    !-- ГЛАВНАЯ --
+
+    section class=page active id=home
+        div class=demoДЕМО-РЕЖИМ · STATICGRAMdiv
+
+        h1 id=greetingДобрый вечер!h1
+        div class=subtitleУправляйте своими Stars и Gramdiv
+
+        div class=balance-card
+            div class=balance-captionВаш внутренний счётdiv
+
+            div class=balance-row stars
+                span class=currency-icon★span
+                span id=homeStars12 450 Starsspan
+            div
+
+            div class=balance-row gram
+                span class=currency-icon◇span
+                span id=homeGram1 250 Gramspan
+            div
+
+            div class=account-bottomВНУТРЕННИЙ СЧЁТ · DEMOdiv
+        div
+
+        div class=actions
+            button class=action onclick=openPage('transfer')
+                div class=action-icon➤div
+                div class=action-labelПеревестиdiv
+            button
+
+            button class=action onclick=openPage('topup')
+                div class=action-icon＋div
+                div class=action-labelПополнитьdiv
+            button
+
+            button class=action onclick=openPage('exchange')
+                div class=action-icon⇄div
+                div class=action-labelОбменdiv
+            button
+
+            button class=action onclick=openPage('gift')
+                div class=action-icon♔div
+                div class=action-labelПодаритьdiv
+            button
+        div
+
+        h2 class=section-titleМой счётh2
+
+        div class=product
+            div class=product-icon★div
+            div class=product-info
+                div class=product-nameБаланс Starsdiv
+                div class=product-description id=starsDescription
+                    12 450 Stars
+                div
+            div
+            div class=arrow›div
+        div
+
+        div class=product
+            div class=product-icon style=color#51b9ff;background#142b38◇div
+            div class=product-info
+                div class=product-nameБаланс Gramdiv
+                div class=product-description id=gramDescription
+                    1 250 Gram
+                div
+            div
+            div class=arrow›div
+        div
+
+        h2 class=section-titleПоследние операцииh2
+
+        div id=homeTransactionsdiv
+
+        div class=notice
+            Демонстрационный интерфейс Т-Банк для StaticGram.
+            Балансы условные. Операции сохраняются только в браузере
+            и не переводят реальные Stars или Gram.
+        div
+    section
+
+    !-- ПЕРЕВОД --
+
+    section class=page id=transfer
+        div class=demoВНУТРЕННИЙ СЧЁТdiv
+        h1Переводh1
+        div class=subtitleОтправка валюты пользователюdiv
+
+        div class=form-card
+            label class=field-label for=transferUser
+                Получатель
+            label
+
+            input
+                class=field
+                id=transferUser
+                placeholder=@username
+                maxlength=64
+                autocomplete=off
+            
+
+            label class=field-label for=transferCurrency
+                Валюта
+            label
+
+            select class=field id=transferCurrency
+                option value=starsStars ★option
+                option value=gramGram ◇option
+            select
+
+            label class=field-label for=transferAmount
+                Сумма перевода
+            label
+
+            input
+                class=field
+                id=transferAmount
+                type=number
+                min=1
+                step=1
+                placeholder=Введите сумму
+            
+
+            button class=primary onclick=makeTransfer(false)
+                Продолжить
+            button
+
+            div class=hint
+                Демо-режим получатель не получит реальные средства.
+                Для настоящих переводов необходим сервер StaticGram.
+            div
+        div
+
+        button class=secondary onclick=openPage('home')
+            Назад
+        button
+    section
+
+    !-- ПОПОЛНЕНИЕ --
+
+    section class=page id=topup
+        div class=demoПОПОЛНЕНИЕ СЧЁТАdiv
+        h1Пополнениеh1
+        div class=subtitleДобавление условных средств в демоверсииdiv
+
+        div class=form-card
+            label class=field-label for=topupCurrency
+                Валюта
+            label
+
+            select class=field id=topupCurrency
+                option value=starsStars ★option
+                option value=gramGram ◇option
+            select
+
+            label class=field-label for=topupAmount
+                Сумма
+            label
+
+            input
+                class=field
+                id=topupAmount
+                type=number
+                min=1
+                step=1
+                placeholder=Введите сумму
+            
+
+            button class=primary onclick=topUp()
+                Пополнить демобаланс
+            button
+
+            div class=hint
+                Эта кнопка изменяет только локальный демонстрационный
+                баланс. Она не принимает оплату и не начисляет настоящие
+                Stars или Gram.
+            div
+        div
+
+        button class=secondary onclick=openPage('home')
+            Назад
+        button
+    section
+
+    !-- ОБМЕН --
+
+    section class=page id=exchange
+        div class=demoОБМЕН ВАЛЮТЫdiv
+        h1Обменh1
+        div class=subtitleОбмен условных Stars и Gramdiv
+
+        div class=form-card
+            label class=field-label for=exchangeFrom
+                Отдаёте
+            label
+
+            select class=field id=exchangeFrom onchange=updateExchangeHint()
+                option value=starsStars ★option
+                option value=gramGram ◇option
+            select
+
+            label class=field-label for=exchangeAmount
+                Сумма
+            label
+
+            input
+                class=field
+                id=exchangeAmount
+                type=number
+                min=1
+                step=1
+                placeholder=Введите сумму
+                oninput=updateExchangeHint()
+            
+
+            label class=field-label for=exchangeTo
+                Получаете
+            label
+
+            select class=field id=exchangeTo onchange=updateExchangeHint()
+                option value=gramGram ◇option
+                option value=starsStars ★option
+            select
+
+            div class=product style=margin-top18px
+                div class=product-icon⇄div
+                div class=product-info
+                    div class=product-nameПредварительный расчётdiv
+                    div class=product-description id=exchangeHint
+                        Демо-курс 1 Stars = 1 Gram
+                    div
+                div
+            div
+
+            button class=primary onclick=exchange()
+                Обменять
+            button
+
+            div class=hint
+                Курс фиксированный и используется только для демонстрации.
+                Он не отражает реальную рыночную стоимость валют.
+            div
+        div
+
+        button class=secondary onclick=openPage('home')
+            Назад
+        button
+    section
+
+    !-- ПОДАРОК --
+
+    section class=page id=gift
+        div class=demoПОДАРКИdiv
+        h1Подаритьh1
+        div class=subtitleОтправка виртуального подаркаdiv
+
+        div class=form-card
+            label class=field-label for=giftUser
+                Получатель
+            label
+
+            input
+                class=field
+                id=giftUser
+                placeholder=@username
+                maxlength=64
+                autocomplete=off
+            
+
+            label class=field-label for=giftCurrency
+                Валюта подарка
+            label
+
+            select class=field id=giftCurrency
+                option value=starsStars ★option
+                option value=gramGram ◇option
+            select
+
+            label class=field-label for=giftAmount
+                Сумма подарка
+            label
+
+            input
+                class=field
+                id=giftAmount
+                type=number
+                min=1
+                step=1
+                placeholder=Введите сумму
+            
+
+            button class=primary onclick=makeTransfer(true)
+                Отправить подарок
+            button
+
+            div class=hint
+                В демонстрационном режиме баланс отправителя уменьшается,
+                но средства другому пользователю не перечисляются.
+            div
+        div
+
+        button class=secondary onclick=openPage('home')
+            Назад
+        button
+    section
+
+    !-- ОПЕРАЦИИ --
+
+    section class=page id=operations
+        div class=demoИСТОРИЯ СЧЁТАdiv
+        h1Операцииh1
+        div class=subtitleИстория демонстрационных транзакцийdiv
+
+        div id=allTransactionsdiv
+
+        button class=secondary onclick=openPage('home')
+            На главную
+        button
+    section
+
+    !-- ПРОФИЛЬ --
+
+    section class=page id=profile
+        div class=demoПРОФИЛЬdiv
+        h1Профильh1
+        div class=subtitleВаш кабинет StaticGramdiv
+
+        div class=profile-card
+            div class=profile-name id=profileNameПользовательdiv
+            div class=product-description id=profileUsername
+                Демо-аккаунт
+            div
+        div
+
+        div class=product
+            div class=product-icon★div
+            div class=product-info
+                div class=product-nameStarsdiv
+                div class=product-description id=profileStarsdiv
+            div
+        div
+
+        div class=product
+            div class=product-icon style=color#51b9ff;background#142b38◇div
+            div class=product-info
+                div class=product-nameGramdiv
+                div class=product-description id=profileGramdiv
+            div
+        div
+
+        div class=notice
+            Т-Банк для StaticGram — независимый демонстрационный проект.
+            Он не является официальным приложением банка.
+        div
+
+        button class=secondary onclick=resetDemo()
+            Сбросить демоданные
+        button
+    section
+
+div
+
+nav class=bottom-nav
+    button class=nav-button active data-page=home onclick=openPage('home')
+        span class=nav-icon⌂span
+        spanГлавнаяspan
+    button
+
+    button class=nav-button data-page=operations onclick=openPage('operations')
+        span class=nav-icon▥span
+        spanОперацииspan
+    button
+
+    button class=nav-button data-page=exchange onclick=openPage('exchange')
+        span class=nav-icon⇄span
+        spanОбменspan
+    button
+
+    button class=nav-button data-page=profile onclick=openPage('profile')
+        span class=nav-icon⚙span
+        spanПрофильspan
+    button
+nav
+
+div class=toast id=toastdiv
+
+script
+const tg = window.Telegram.WebApp;
+
+if (tg) {
+    tg.ready();
+    tg.expand();
+
+    try {
+        tg.setHeaderColor(#101010);
+        tg.setBackgroundColor(#101010);
+    } catch (e) {}
+}
+
+
+  ДЕМО-БАЛАНСЫ
+ 
+  Все данные ниже хранятся в браузере.
+  Для настоящих переводов потребуется серверная база данных.
+ 
+
+const STORAGE_KEY = staticgram_tbank_demo_v1;
+
+const initialState = {
+    stars 12450,
+    gram 1250,
+    transactions [
+        {
+            title Демонстрационный перевод Stars,
+            amount -500,
+            currency stars,
+            date Сегодня, 1421,
+            icon ➤
+        },
+        {
+            title Демонстрационное пополнение Gram,
+            amount 2000,
+            currency gram,
+            date Сегодня, 1217,
+            icon ◇
+        },
+        {
+            title Демонстрационный подарок,
+            amount -750,
+            currency stars,
+            date Вчера, 2045,
+            icon ♔
+        }
+    ]
+};
+
+let state = loadState();
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if (saved) {
+            const parsed = JSON.parse(saved);
+
+            if (
+                Number.isFinite(parsed.stars) &&
+                Number.isFinite(parsed.gram) &&
+                Array.isArray(parsed.transactions)
+            ) {
+                return parsed;
+            }
+        }
+    } catch (e) {}
+
+    return JSON.parse(JSON.stringify(initialState));
+}
+
+function saveState() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+        showToast(Не удалось сохранить данные браузера);
+    }
+}
+
+function formatNumber(number) {
+    return Math.floor(number).toLocaleString(ru-RU);
+}
+
+function currencyName(currency) {
+    return currency === stars  Stars  Gram;
+}
+
+function currencyIcon(currency) {
+    return currency === stars  ★  ◇;
+}
+
+function moneyText(amount, currency) {
+    const sign = amount  0  +  amount  0  −  ;
+    return sign + formatNumber(Math.abs(amount)) +   +
+        currencyName(currency);
+}
+
+function renderTransactions(containerId, limit = Infinity) {
+    const container = document.getElementById(containerId);
+
+    const items = state.transactions.slice(0, limit);
+
+    if (!items.length) {
+        container.innerHTML = `
+            div class=empty
+                Операций пока нет.br
+                Здесь появится история вашего счёта.
+            div
+        `;
+        return;
+    }
+
+    container.innerHTML = items.map(tx = {
+        const positive = tx.amount  0;
+
+        return `
+            div class=transaction
+                div class=transaction-icon
+                    ${escapeHtml(tx.icon  currencyIcon(tx.currency))}
+                div
+
+                div class=transaction-info
+                    div class=transaction-name
+                        ${escapeHtml(tx.title)}
+                    div
+                    div class=transaction-date
+                        ${escapeHtml(tx.date)} · Демо
+                    div
+                div
+
+                div class=transaction-amount ${positive  positive  negative}
+                    ${escapeHtml(moneyText(tx.amount, tx.currency))}
+                div
+            div
+        `;
+    }).join();
+}
+
+function escapeHtml(value) {
+    return String(value).replace([&']g, character = ({
+        & &amp;,
+         &lt;,
+         &gt;,
+        '' &quot;,
+        ' &#039;
+    })[character]);
+}
+
+function render() {
+    document.getElementById(homeStars).textContent =
+        formatNumber(state.stars) +  Stars;
+
+    document.getElementById(homeGram).textContent =
+        formatNumber(state.gram) +  Gram;
+
+    document.getElementById(starsDescription).textContent =
+        formatNumber(state.stars) +  Stars;
+
+    document.getElementById(gramDescription).textContent =
+        formatNumber(state.gram) +  Gram;
+
+    document.getElementById(profileStars).textContent =
+        formatNumber(state.stars) +  Stars;
+
+    document.getElementById(profileGram).textContent =
+        formatNumber(state.gram) +  Gram;
+
+    renderTransactions(homeTransactions, 3);
+    renderTransactions(allTransactions);
+
+    saveState();
+
+    updateExchangeHint();
+}
+
+function addTransaction(title, amount, currency, icon) {
+    const now = new Date();
+
+    state.transactions.unshift({
+        title,
+        amount,
+        currency,
+        icon,
+        date now.toLocaleDateString(ru-RU) + ,  +
+            now.toLocaleTimeString(ru-RU, {
+                hour 2-digit,
+                minute 2-digit
+            })
+    });
+
+    state.transactions = state.transactions.slice(0, 100);
+}
+
+function openPage(page) {
+    const target = document.getElementById(page);
+
+    if (!target) return;
+
+    document.querySelectorAll(.page).forEach(element = {
+        element.classList.remove(active);
+    });
+
+    target.classList.add(active);
+
+    document.querySelectorAll(.nav-button).forEach(button = {
+        button.classList.toggle(
+            active,
+            button.dataset.page === page
+        );
+    });
+
+    window.scrollTo({ top 0, behavior smooth });
+}
+
+let toastTimer;
+
+function showToast(message) {
+    const element = document.getElementById(toast);
+
+    element.textContent = message;
+    element.style.display = block;
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() = {
+        element.style.display = none;
+    }, 2600);
+
+    if (tg && tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred(light);
+    }
+}
+
+function makeTransfer(isGift) {
+    const userId = isGift  giftUser  transferUser;
+    const currencyId = isGift  giftCurrency  transferCurrency;
+    const amountId = isGift  giftAmount  transferAmount;
+
+    const username = document.getElementById(userId).value.trim();
+    const currency = document.getElementById(currencyId).value;
+    const amount = Number(document.getElementById(amountId).value);
+
+    if (!username) {
+        showToast(Введите имя получателя);
+        return;
+    }
+
+    if (!Number.isSafeInteger(amount)  amount = 0) {
+        showToast(Введите целую сумму больше нуля);
+        return;
+    }
+
+    if (amount  state[currency]) {
+        showToast(Недостаточно средств на демосчёте);
+        return;
+    }
+
+    const cleanUsername = username.replace(^@, );
+
+    if (!^[a-zA-Z0-9_]{1,32}$.test(cleanUsername)) {
+        showToast(Проверьте имя пользователя);
+        return;
+    }
+
+    const confirmed = confirm(
+        (isGift  Отправить демоподарок   Выполнить демоперевод ) +
+        amount +   + currencyName(currency) +
+         пользователю @ + cleanUsername + 
+    );
+
+    if (!confirmed) return;
+
+    state[currency] -= amount;
+
+    addTransaction(
+        (isGift  Демоподарок @  Демоперевод @) + cleanUsername,
+        -amount,
+        currency,
+        isGift  ♔  ➤
+    );
+
+    render();
+
+    document.getElementById(amountId).value = ;
+
+    showToast(Демооперация выполнена. Реальный перевод не отправлен.);
+
+    openPage(home);
+}
+
+function topUp() {
+    const currency = document.getElementById(topupCurrency).value;
+    const amount = Number(document.getElementById(topupAmount).value);
+
+    if (!Number.isSafeInteger(amount)  amount = 0) {
+        showToast(Введите целую сумму больше нуля);
+        return;
+    }
+
+    if (amount  1000000) {
+        showToast(Слишком большая сумма для деморежима);
+        return;
+    }
+
+    if (!confirm(
+        Добавить  + amount +   + currencyName(currency) +
+         к условному демобалансу
+    )) {
+        return;
+    }
+
+    state[currency] += amount;
+
+    addTransaction(
+        Демо-пополнение счёта,
+        amount,
+        currency,
+        ＋
+    );
+
+    document.getElementById(topupAmount).value = ;
+
+    render();
+
+    showToast(Демобаланс пополнен);
+
+    openPage(home);
+}
+
+function updateExchangeHint() {
+    const from = document.getElementById(exchangeFrom).value;
+    const to = document.getElementById(exchangeTo).value;
+    const amount = Number(
+        document.getElementById(exchangeAmount).value
+    )  0;
+
+    const hint = document.getElementById(exchangeHint);
+
+    if (from === to) {
+        hint.textContent = Выберите разные валюты;
+        return;
+    }
+
+    if (amount  0) {
+        hint.textContent =
+            formatNumber(amount) +   + currencyName(from) +
+             →  + formatNumber(amount) +   + currencyName(to) +
+             · условный курс 11;
+    } else {
+        hint.textContent = Демо-курс 1  +
+            currencyName(from) +  = 1  + currencyName(to);
+    }
+}
+
+function exchange() {
+    const from = document.getElementById(exchangeFrom).value;
+    const to = document.getElementById(exchangeTo).value;
+    const amount = Number(
+        document.getElementById(exchangeAmount).value
+    );
+
+    if (from === to) {
+        showToast(Выберите разные валюты);
+        return;
+    }
+
+    if (!Number.isSafeInteger(amount)  amount = 0) {
+        showToast(Введите целую сумму больше нуля);
+        return;
+    }
+
+    if (amount  state[from]) {
+        showToast(Недостаточно средств);
+        return;
+    }
+
+    if (!confirm(
+        Обменять  + amount +   + currencyName(from) +
+         на  + amount +   + currencyName(to) +
+         по условному курсу 11
+    )) {
+        return;
+    }
+
+    state[from] -= amount;
+    state[to] += amount;
+
+    addTransaction(
+        Обмен  + currencyName(from) +  →  + currencyName(to),
+        -amount,
+        from,
+        ⇄
+    );
+
+    addTransaction(
+        Получено после демонстрационного обмена,
+        amount,
+        to,
+        ⇄
+    );
+
+    document.getElementById(exchangeAmount).value = ;
+
+    render();
+
+    showToast(Демообмен выполнен);
+
+    openPage(home);
+}
+
+function resetDemo() {
+    if (!confirm(Сбросить балансы и историю демоопераций)) {
+        return;
+    }
+
+    state = JSON.parse(JSON.stringify(initialState));
+
+    render();
+
+    showToast(Демоданные сброшены);
+
+    openPage(home);
+}
+
+function initUser() {
+    const user = tg.initDataUnsafe.user;
+
+    if (!user) {
+        document.getElementById(profileName).textContent = Демо-пользователь;
+        document.getElementById(profileUsername).textContent =
+            Открыто вне StaticGram;
+        return;
+    }
+
+    const name = user.first_name  Пользователь;
+
+    document.getElementById(greeting).textContent =
+        Добрый вечер,  + name + !;
+
+    document.getElementById(profileName).textContent = name;
+
+    document.getElementById(profileUsername).textContent =
+        user.username  @ + user.username  Пользователь StaticGram;
+
+    document.getElementById(avatar).textContent =
+        name.charAt(0).toUpperCase();
+}
+
+initUser();
+render();
+script
+
+body
+html
